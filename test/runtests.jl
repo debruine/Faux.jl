@@ -1,6 +1,5 @@
-using Faux
-using Test
+using Faux, Test
 
-@testset "Faux.jl" begin
-    # Write your tests here.
-end
+include("utilities.jl")
+include("mvn.jl")
+include("design.jl")
