@@ -1,8 +1,8 @@
-using DataFrames, DataStructures
+using DataFrames
 
 """
-    sim_design(within = OrderedDict(), 
-                between = OrderedDict(), 
+    sim_design(within = [], 
+               between = [], 
                 n = 100, mu = 0, sd = 1, r = 0, 
                 empirical::Bool = false, 
                 long::Bool = false, 
@@ -17,8 +17,8 @@ Simulate data from design
 Generates a data table with a specified within and between design. 
 
 # Arguments
-* `within`: an OrderedDict of the within-subject factors
-* `between`: an OrderedDict of the between-subject factors
+* `within`: an array of Pairs for the within-subject factors
+* `between`: an array of Pairs for the between-subject factors
 * `n`: the number of samples required per between-subject cell
 * `mu`: the means of the variables
 * `sd`: the standard deviations of the variables
@@ -34,13 +34,13 @@ Generates a data table with a specified within and between design.
 # Examples
 ```julia-repl
 julia> using Faux, DataStructures
-julia> b = OrderedDict("condition" => ["ctl", "exp"])
-julia> w = OrderedDict("version" => ["A", "B"])
+julia> b = ["condition" => ["ctl", "exp"]]
+julia> w = ["version" => ["A", "B"]]
 julia> df = sim_design(within = w, between = b, n = 10)
 ```
 """
-function sim_design(;within::OrderedDict = OrderedDict(), 
-                     between::OrderedDict = OrderedDict(), 
+function sim_design(;within = [], 
+                     between = [], 
                      n = 100, mu = 0, sd = 1, r = 0, 
                      empirical::Bool = false, 
                      long::Bool = false, 
@@ -52,8 +52,8 @@ function sim_design(;within::OrderedDict = OrderedDict(),
     # define columns
     cells_b = cell_combos(between, dv, sep) 
     cells_w = cell_combos(within, dv, sep)
-    within_factors = keys(within) |> collect
-    between_factors = keys(between) |> collect
+    within_factors = first.(within)
+    between_factors = first.(between)
     nb = length(cells_b)
     nw = length(cells_w)
 
@@ -158,7 +158,7 @@ function sim_design(;within::OrderedDict = OrderedDict(),
 end
 
 # """
-#     cell_combos(factors = OrderedDict(), dv = "y", sep = "_")
+#     cell_combos(factors = [], dv = "y", sep = "_")
 
 # Generate cell names from factor levels
 
@@ -169,8 +169,8 @@ end
 
 # # Examples
 # ```julia-repl
-# julia> within = OrderedDict("cond" => ["ctl", "exp"],
-#                             "vers" => ["A", "B"])
+# julia> within = ["cond" => ["ctl", "exp"],
+#                  "vers" => ["A", "B"]]
 # julia> cell_combos(within)
 #   4-element Vector{String}:
 #     "ctl_A"
@@ -180,20 +180,20 @@ end
 # ```
 # """
 
-function cell_combos(factors::OrderedDict = OrderedDict(), 
+function cell_combos(factors = [], 
                      dv::String = "y", 
                      sep::String = "_")
     if isempty(factors)
         cells = [dv]
     else
-        names = keys(factors) .|> String
-        lengths = [length(factors[x]) for x in names]
+        names = first.(factors)
+        lengths = length.(getfield.(factors, 2))
         celln = foldl(*, lengths)
         cells = DataFrame([repeat([""], celln) for _ = names], names)
 
         for n in 1:length(names)
             ofold = lengths[1:n-1]
-            v = repeat(factors[names[n]], outer = foldl(*, ofold))
+            v = repeat(factors[n][2], outer = foldl(*, ofold))
 
             if (n < length(lengths))
                 ifold = lengths[n+1:length(lengths)]
@@ -213,14 +213,13 @@ end
 function anon(factor...)
     n = length(factor)
     names = string.(('A':'Z')[1:n])
-    factors = OrderedDict{String, Vector{String}}()
+    factors = Vector{Pair{String, Vector{String}}}(undef, n)
     for i in 1:n
         lvl_n = factor[i]
         levels = string.(names[i], lpad.(1:lvl_n, ndigits(lvl_n), '0'))
-        factors[names[i]] = levels
+        factors[i] = (names[i] => levels)
     end
 
     return factors
 end
-
 

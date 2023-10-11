@@ -1,10 +1,10 @@
 using Faux, Test
-using DataFrames, DataStructures, Statistics, Random
+using DataFrames, Statistics, Random
 
 @testset "anon" begin
-    @test anon(2) == OrderedDict("A" => ["A1", "A2"])
-    @test anon(2, 3) == OrderedDict("A" => ["A1", "A2"],
-                                    "B" => ["B1", "B2", "B3"])
+    @test anon(2) == ["A" => ["A1", "A2"]]
+    @test anon(2, 3) == ["A" => ["A1", "A2"],
+                         "B" => ["B1", "B2", "B3"]]
 
     df = sim_design(within = anon(2))
     @test names(df) == ["id", "A1", "A2"]
@@ -57,19 +57,17 @@ end
 
 @testset "sim_design long" begin
     # 1 within
-    within = OrderedDict(
-        "pet" => ["cat", "dog", "ferret"]
-    )
+    within = ["pet" => ["cat", "dog", "ferret"]]
 
     df = sim_design(within = within, long = true)
     @test size(df) == (300, 3)
     @test names(df) == ["id", "pet", "y"]
 
     # 2 within
-    within = OrderedDict(
+    within = [
         "pet" => ["cat", "dog", "ferret"],
         "time" => ["day", "night"]
-    )
+    ]
     df = sim_design(within = within, long = true)
     @test size(df) == (600, 4)
     @test names(df) == ["id", "pet", "time", "y"]
@@ -90,9 +88,7 @@ end
     @test mean(df.y) ≈ 100 atol = 2
     @test std(df.y) ≈ 10 atol = 1
 
-    within = OrderedDict(
-        "pet" => ["cat", "dog", "ferret"]
-    )
+    within = ["pet" => ["cat", "dog", "ferret"]]
     df = sim_design(within = within, 
                     mu = [100, 200, 300],
                     sd = [1, 2, 3], 
@@ -107,9 +103,7 @@ end
 
 @testset "sim_design between" begin
     # 1 between 
-    between = OrderedDict(
-        "pet" => ["cat", "dog", "ferret"]
-    )
+    between = ["pet" => ["cat", "dog", "ferret"]]
     df = sim_design(between = between, mu = [1,2,3], empirical = true)
     @test size(df) == (300, 3)
     @test names(df) == ["id", "pet", "y"]
@@ -125,11 +119,11 @@ end
     @test ns.nrow == [5, 10, 15]
 
     # 3 between
-    between = OrderedDict(
+    between = [
         "pet" => ["cat", "dog", "ferret"],
         "time" => ["day", "night"],
         "x" => ["A", "B", "C", "D"]
-    )
+    ]
     df = sim_design(n = 10, between = between)
     @test size(df) == (2*3*4*10, 5)
     @test names(df) == ["id", "pet", "time", "x", "y"]
@@ -137,30 +131,24 @@ end
 
 @testset "sim_design within" begin
     # 1 within 
-    within = OrderedDict(
-        "pet" => ["cat", "dog", "ferret"]
-    )
+    within = ["pet" => ["cat", "dog", "ferret"]]
     df = sim_design(within = within)
     @test size(df) == (100, 4)
     @test names(df) == ["id", "cat", "dog", "ferret"]
 
     # 2 within
-    within = OrderedDict(
+    within = [
         "pet" => ["cat", "dog"],
         "time" => ["day", "night"]
-    )
+    ]
     df = sim_design(within = within)
     @test size(df) == (100, 5)
     @test names(df) == ["id", "cat_day", "cat_night", "dog_day", "dog_night"]
 end
 
 @testset "sim_design between and within" begin
-    within = OrderedDict(
-        "pet" => ["cat", "dog", "ferret"]
-    )
-    between = OrderedDict(
-        "cond" => ["a", "b"]
-    )
+    within = ["pet" => ["cat", "dog", "ferret"]]
+    between = ["cond" => ["a", "b"]]
     mu = Dict("a" => Dict("ferret" => 30, "dog" => 20, "cat" => 10),
               "b" => Dict("cat" => 15, "dog" => 25, "ferret" => 35))
     sd = Dict("a" => Dict("ferret" => 3, "dog" => 2, "cat" => 1),
@@ -209,11 +197,11 @@ end
 end
 
 @testset "cell_combos" begin
-    between = OrderedDict(
+    between = [
         "pet" => ["cat", "dog", "ferret"],
         "time" => ["day", "night"],
         "x" => ["A", "B", "C", "D"]
-    )
+    ]
     cells = cell_combos(between)
     
 
