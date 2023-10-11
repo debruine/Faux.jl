@@ -74,11 +74,12 @@ function rnorm_multi(;n=100, vars=1, mu=0, sd=1, r=0,
     X = mu .+ eS.vectors * Diagonal(sqrt.(max.(ev, 0))) * transpose(X)
     
     mvn = transpose(X) |> Matrix
-    if !as_matrix
-      mvn = DataFrame(mvn, :auto)
-      if length(varnames) == p
-        rename!(mvn, varnames, makeunique = true)
-      end
+    if !as_matrix 
+        # convert to a data frame
+        mvn = DataFrame(mvn, :auto)
+        if length(varnames) == p
+            rename!(mvn, varnames, makeunique = true)
+        end
     end
     
     return mvn
@@ -86,11 +87,11 @@ function rnorm_multi(;n=100, vars=1, mu=0, sd=1, r=0,
 
   function get_params(x; digits = 2)
     if isa(x, DataFrame)
-      x = select_by_type(x)
-      names = DataFrames.names(x)
-      x = Matrix(x)
+        x = select_by_type(x)
+        names = DataFrames.names(x)
+        x = Matrix(x)
     else 
-      names = ["X$i" for i in 1:size(x, 2)]
+        names = ["X$i" for i in 1:size(x, 2)]
     end
       
     # recover sample parameters

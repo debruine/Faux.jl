@@ -3,7 +3,9 @@
 ```@example Main
 using Faux # for data simulation (under development!)
 using DataFrames # for data wrangling
+using CairoMakie # for plots
 import Random
+using GLM # to calculate regression lines (why doesn't Makie do this?)
 
 rng = Random.seed!(8675309); # make randomness predictable :)
 ```
@@ -71,3 +73,21 @@ cats = filter(row -> row.pet == "cat", df)
 get_params(cats)
 ```
 
+
+```@example Main
+df = sim_design(n = 1000,
+                within = ["axis" => ["x", "y"]], 
+                mu = [0, 100], 
+                sd = [1, 10],
+                r = 0.5);
+
+# ugh, I want ggplot2 :(
+f = Figure()
+hist(f[1,1], df.x)
+hist(f[1,2], df.y)
+scatter(f[2,1],df.x, df.y, alpha = 0.25)
+m = GLM.lm(@formula(y ~ x), df)
+ablines!(f[2,1], coef(m)...)
+f
+
+```
