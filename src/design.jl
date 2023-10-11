@@ -1,45 +1,44 @@
 using DataFrames, DataStructures
 
-# """
-#     sim_design(within = OrderedDict(), 
-#                 between = OrderedDict(), 
-#                 n = 100, mu = 0, sd = 1, r = 0, 
-#                 empirical::Bool = false, 
-#                 long::Bool = false, 
-#                 dv::String = "y", 
-#                 id::String = "id",
-#                 vardesc::Dict = Dict(),
-#                 sep::String = "_",
-#                 rep::Int64 = 1)
+"""
+    sim_design(within = OrderedDict(), 
+                between = OrderedDict(), 
+                n = 100, mu = 0, sd = 1, r = 0, 
+                empirical::Bool = false, 
+                long::Bool = false, 
+                dv::String = "y", 
+                id::String = "id",
+                vardesc::Dict = Dict(),
+                sep::String = "_",
+                rep::Int64 = 1)
 
-# Simulate data from design
+Simulate data from design
 
-# Generates a data table with a specified within and between design. 
+Generates a data table with a specified within and between design. 
 
-# # Arguments
-# * `within`: an OrderedDict of the within-subject factors
-# * `between`: an OrderedDict of the between-subject factors
-# * `n`: the number of samples required per between-subject cell
-# * `mu`: the means of the variables
-# * `sd`: the standard deviations of the variables
-# * `r`: the correlations among the variables (can be a single number, full correlation matrix as a matrix or vector, or a vector of the upper right triangle of the correlation matrix
-# * `empirical`: if true, mu, sd and r specify the empirical not population mean, sd and covariance 
-# * `long`: Whether the returned tbl is in wide or long format (defaults to value of `faux_options("long")`)
-# * `dv`: the name of the dv column for long plots (defaults to y)
-# * `id`: the name of the id column (defaults to id)
-# * `vardesc`: a Dict of variable descriptions having the names of the within- and between-subject factors
-# * `rep`: the number of data frames to simulate (default 1); if greater than 1, the returned data frame contains a rep column
-# * `sep`: separator for factor levels
+# Arguments
+* `within`: an OrderedDict of the within-subject factors
+* `between`: an OrderedDict of the between-subject factors
+* `n`: the number of samples required per between-subject cell
+* `mu`: the means of the variables
+* `sd`: the standard deviations of the variables
+* `r`: the correlations among the variables (can be a single number, full correlation matrix as a matrix or vector, or a vector of the upper right triangle of the correlation matrix
+* `empirical`: if true, mu, sd and r specify the empirical not population mean, sd and covariance 
+* `long`: Whether the returned tbl is in wide or long format (defaults to value of `faux_options("long")`)
+* `dv`: the name of the dv column for long plots (defaults to y)
+* `id`: the name of the id column (defaults to id)
+* `vardesc`: a Dict of variable descriptions having the names of the within- and between-subject factors
+* `rep`: the number of data frames to simulate (default 1); if greater than 1, the returned data frame contains a rep column
+* `sep`: separator for factor levels
 
-# # Examples
-# ```julia-repl
-# julia> using Faux, DataStructures
-# julia> b = OrderedDict("condition" => ["ctl", "exp"])
-# julia> w = OrderedDict("version" => ["A", "B"])
-# julia> df = sim_design(within = w, between = b, n = 10)
-# ```
-# """
-
+# Examples
+```julia-repl
+julia> using Faux, DataStructures
+julia> b = OrderedDict("condition" => ["ctl", "exp"])
+julia> w = OrderedDict("version" => ["A", "B"])
+julia> df = sim_design(within = w, between = b, n = 10)
+```
+"""
 function sim_design(;within::OrderedDict = OrderedDict(), 
                      between::OrderedDict = OrderedDict(), 
                      n = 100, mu = 0, sd = 1, r = 0, 

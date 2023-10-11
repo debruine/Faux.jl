@@ -3,32 +3,31 @@ using LinearAlgebra
 using DataFrames
 using Statistics
 
-# """
-#     rnorm_multi(n = 100, vars = 1, mu = 0, sd = 1, r = 0, 
-#                 varnames = "X", 
-#                 empirical = false,
-#                 as_matrix = false)
+"""
+    rnorm_multi(n = 100, vars = 1, mu = 0, sd = 1, r = 0, 
+                varnames = "X", 
+                empirical = false,
+                as_matrix = false)
 
-# Make normally distributed vectors with specified relationships.
+Make normally distributed vectors with specified relationships.
 
-# # Arguments
-# * @`n`: the number of samples required
-# * @`vars`: the number of variables to return
-# * @`mu`: a vector giving the means of the variables (numeric vector of length 1 or vars)
-# * @`sd`: the standard deviations of the variables (numeric vector of length 1 or vars)
-# * @`r`: the correlations among the variables (can be a single number, vars*vars matrix, vars*vars vector, or a vars*(vars-1)/2 vector)
-# * @`varnames`: optional names for the variables (string vector of length vars) defaults if r is a matrix with column names
-# * @`empirical`: logical. If true, mu, sd and r specify the empirical not population mean, sd and covariance 
-# * @`as.matrix`: logical. If true, returns a matrix
+# Arguments
+* @`n`: the number of samples required
+* @`vars`: the number of variables to return
+* @`mu`: a vector giving the means of the variables (numeric vector of length 1 or vars)
+* @`sd`: the standard deviations of the variables (numeric vector of length 1 or vars)
+* @`r`: the correlations among the variables (can be a single number, vars*vars matrix, vars*vars vector, or a vars*(vars-1)/2 vector)
+* @`varnames`: optional names for the variables (string vector of length vars) defaults if r is a matrix with column names
+* @`empirical`: logical. If true, mu, sd and r specify the empirical not population mean, sd and covariance 
+* @`as.matrix`: logical. If true, returns a matrix
 
-# # Examples
-# ```julia-repl
-# julia> tovector(1) == [1]
-# julia> tovector(1) != 1
-# julia> tovector(1:3) == [1,2,3]
-# ```
-# """
-
+# Examples
+```julia-repl
+julia> tovector(1) == [1]
+julia> tovector(1) != 1
+julia> tovector(1:3) == [1,2,3]
+```
+"""
 function rnorm_multi(;n=100, vars=1, mu=0, sd=1, r=0, 
                      varnames="X", 
                      empirical=false, 
