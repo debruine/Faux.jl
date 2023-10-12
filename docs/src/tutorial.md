@@ -4,8 +4,9 @@
 using Faux # for data simulation (under development!)
 using DataFrames # for data wrangling
 using CairoMakie # for plots
-import Random
 using GLM # to calculate regression lines (why doesn't Makie do this?)
+using Statistics
+import Random
 
 rng = Random.seed!(8675309); # make randomness predictable :)
 ```
@@ -90,4 +91,47 @@ m = GLM.lm(@formula(y ~ x), df)
 ablines!(f[2,1], coef(m)...)
 f
 
+```
+
+## Repeats
+
+Add the `rep` argument to simulate multiple repeats.  
+
+```@example Main
+df = sim_design(between = ["cond" => ["ctl", "exp"]], 
+                mu = [0, 0.25], rep = 1000, long = true)
+nothing # hide
+```
+
+Use a split-apply-combine pattern to run an analysis. First, define an analyss fucntion that takes a data frame as the only argument, and returns a data frame of analysis values.
+
+```@example Main
+# define an analysis function
+function analysis(df)
+    m = lm(@formula(y ~ cond), df)
+    stats = coeftable(m) 
+    return DataFrame(stats)
+end
+
+# test the analysis function
+analysis(df)
+```
+
+Split the data by rep, run the analysis on each rep, and calculate summary stats like mean coefficient or power.
+
+```@example Main
+# split the data by rep
+df_grp = groupby(df, :rep)
+
+# run the analysis on each rep
+analyses = combine(df_grp, analysis)
+
+# calculate summary stats by factor
+combine(groupby(analyses, :Name),
+        x -> (
+            power = mean(x[!, 6] .< 0.05),
+            mean_coef = mean(x[!, 3]),
+            sd_coef = std(x[!, 3])
+        )
+)
 ```
